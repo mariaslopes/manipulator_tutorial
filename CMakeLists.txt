@@ -14,7 +14,7 @@ find_package(moveit_task_constructor_core REQUIRED)
 set(DEPENDENCIES
   ament_cmake
   moveit_core
-  moveit_ros_planning
+  moveit_ros_planning_interface
   moveit_task_constructor_core
   rclcpp
 )

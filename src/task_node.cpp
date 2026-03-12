@@ -1,6 +1,6 @@
 #include <rclcpp/rclcpp.hpp>
-#include <moveit/planning_scene/planning_scene.hpp>
-#include <moveit/planning_scene_interface/planning_scene_interface.hpp>
+#include <moveit/planning_scene/planning_scene.h>
+#include <moveit/planning_scene_interface/planning_scene_interface.h>
 #include <moveit/task_constructor/task.h>
 #include <moveit/task_constructor/solvers.h>
 #include <moveit/task_constructor/stages.h>
@@ -77,6 +77,9 @@ void MTCTaskNode::setupPlanningScene()
   objects.push_back(box_right);
 
   psi.addCollisionObjects(objects);
+
+  RCLCPP_INFO(LOGGER, "Sent objects to scene. Waiting for MoveIt to catch up...");
+  rclcpp::sleep_for(std::chrono::seconds(1));
 }
 
 void MTCTaskNode::doTask()

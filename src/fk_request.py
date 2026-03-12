@@ -5,6 +5,7 @@ from rclpy.node import Node
 from moveit_msgs.srv import GetPositionFK
 from sensor_msgs.msg import JointState
 import math
+import threading
 
 class FKCalculator(Node):
     def __init__(self):
@@ -56,6 +57,12 @@ class FKCalculator(Node):
 def main():
     rclpy.init()
     node = FKCalculator()
+
+    executor = rclpy.executors.MultiThreadedExecutor()
+    executor.add_node(node)
+
+    thread = threading.Thread(target=executor.spin, daemon=True)
+    thread.start()
     
     result = node.run_fk()
 
