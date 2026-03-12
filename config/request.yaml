@@ -1,0 +1,19 @@
+ik_request:
+  group_name: "panda_arm"
+  pose_stamped:
+    header:
+      frame_id: <target_frame>
+    pose:
+      position:
+        x: <x>
+        y: <y>
+        z: <z>
+      orientation:
+        x: <qx>
+        y: <qy>
+        z: <qz>
+        w: <qw>
+  avoid_collisions: true
+  timeout:
+    sec: 1
+    nanosec: 0
