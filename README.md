@@ -5,14 +5,57 @@ You will progressively explore how robots move by controlling joints, understand
 
 By the end of this tutorial, you will execute a simple pick-and-place task.
 
-## Instalation
+## Installation
 
-1. Clone the repo: `https://github.com/mariaslopes/manipulator_tutorial.git`
+1. Create and initialize a workspace for the tutorial:
 
-2. Install dependencies:
-```bash
-rosdep install --from-paths src/manipulator_tutorial -i -y
-```
+    ```bash
+    mkdir -p ~/ros2_ws/src
+    ```
+
+2. Clone the tutorial repository inside the `src` folder:
+
+    ```bash
+    cd ~/ros2_ws/src
+    git clone -b humble https://github.com/mariaslopes/manipulator_tutorial.git
+    ```
+
+3. From the workspace root, install all required ROS dependencies:
+
+    ```bash
+    cd ~/ros2_ws
+    rosdep install --from-paths src --ignore-src -r -y
+    ```
+
+4. Compile the workspace using **symbolic installation**:
+
+    ```bash
+    colcon build --symlink-install
+    ```
+
+    Note: Using `--symlink-install` allows configuration files (e.g., YAML files in `config/`) to be modified **without recompiling the workspace**.
+
+5. Before running the tutorial, source the workspace:
+
+    ```bash
+    source install/setup.bash
+    ```
+
+    Note: You will need to source the workspace in **every new terminal** before running the tutorial commands.
+
+6. (Optional) Automatically source the workspace:
+
+    To avoid sourcing the workspace manually in every new terminal, you can add it to your `.bashrc` file:
+
+    ```bash
+    echo "source ~/ros2_ws/install/setup.bash" >> ~/.bashrc
+    ```
+
+    After doing this, either restart the terminal or run:
+
+    ```bash
+    source ~/.bashrc
+    ```
 
 ## Tutorial
 
@@ -23,11 +66,11 @@ rosdep install --from-paths src/manipulator_tutorial -i -y
     Launch the robot model with a graphical interface that allows you to move the joints manually.
 
     ```bash
-    ros2 launch manipulator_tutorial robot_visualization.launch.py 
+    ros2 launch manipulator_tutorial robot_visualization.launch.py
     ```
     Move the sliders and observe how each joint changes the robot's pose.
 
-2. CHeck the robots structure (TF tree). In another terminal run:
+2. Check the robot's structure (TF tree). In another terminal run:
 
     ```bash
     ros2 run rqt_tf_tree rqt_tf_tree
@@ -46,12 +89,12 @@ rosdep install --from-paths src/manipulator_tutorial -i -y
 
     * In another terminal
       ```bash
-      ros2 launch manipulator_tutorial task_launch.launch.py 
+      ros2 launch manipulator_tutorial task_launch.launch.py
       ```
     * You should see:
     ![](resources/scene.png)
 
-2. Where is the box? 
+2. Where is the box?
 
     Before moving the robot, you must determine where the object is located.
 
@@ -63,28 +106,27 @@ rosdep install --from-paths src/manipulator_tutorial -i -y
 
     Hint: ros2 run tf2_ros tf2_echo <target_frame> <object_frame>.
 
-3. Can the arm reach the? (Inverse Kinematics)
+3. Can the arm reach the box? (Inverse Kinematics)
 
     Knowing where the box is located is not enough.
 
     The robot must determine how to move its joints to reach that position.
 
-    This is known as Inverse Kinematics (IK). 
-    
+    This is known as Inverse Kinematics (IK).
+
     Your task is to compute the joint configuration that places the end-effector at the box position.
 
     #### Steps:
 
-    1. Fill the file `config/request.yaml` file
-    2. `colcon build && source install/setup.install`
-    3. `ros2 run manipulator_tutorial ik_request.py`
-    4. In RViz, open the Joints panel and manually set the joints to the values returned by the IK solver.
-    5. Verify the solution: Planning Tab > Click Plan and Execute
+    1. Fill the `config/request.yaml` file.
+    2. `ros2 run manipulator_tutorial ik_request.py`
+    3. In RViz, open the Joints panel and manually set the joints to the values returned by the IK solver.
+    4. Verify the solution: Planning Tab > Click Plan and Execute
 
         **Note:** Give the finger joint a value of 0.040, so that the gripper is open.
 
-    **Extra Experiment**: 
-    * Move the robot to a random configuration: (chose joint values or use Goal State > Random valid > Plan and Execute)
+    **Extra Experiment**:
+    * Move the robot to a random configuration: (choose joint values or use Goal State > Random valid > Plan and Execute)
     * Compute the IK solution again. (step 2)
     * Is the IK solution the same? Why/why not? Does the robot still reach the correct pose?
 
@@ -92,7 +134,7 @@ rosdep install --from-paths src/manipulator_tutorial -i -y
 
     **Hint:** Find the pose of box_right using TF and modify the z coordinate: `z = z + 0.05` (This places the box slightly above box_right).
 
-5. Now see everything working together stop second terminal and run:
+5. Now see everything working together. Stop the second terminal and run:
 
     ```bash
     ros2 launch manipulator_tutorial task_launch.launch.py mode:=1
@@ -104,7 +146,7 @@ rosdep install --from-paths src/manipulator_tutorial -i -y
 
 Another way to determine the pose of an object is to move the robot to that position and compute the end-effector pose. This uses Forward Kinematics (FK).
 
-1. Relaunch the envoironment
+1. Relaunch the environment:
 
   * In one terminal
     ```bash
@@ -113,10 +155,10 @@ Another way to determine the pose of an object is to move the robot to that posi
 
   * In another terminal
     ```bash
-    ros2 launch manipulator_tutorial task_launch.launch.py 
+    ros2 launch manipulator_tutorial task_launch.launch.py
     ```
 
-2. Move the robot to box_left (use either the model or the Joint Panel). Then click: `Plan and Execute`
+2. Move the robot to `box_left` (use either the model or the Joint Panel). Then click: `Plan and Execute`
 
 3. Compute the end-effector pose:
 
@@ -124,5 +166,4 @@ Another way to determine the pose of an object is to move the robot to that posi
     ros2 run manipulator_tutorial fk_request.py
     ```
 
-4. Compare the solution with the one obtained in 2.2. Are the poses identical? If there is a difference, why might that happen?
-
+4. Compare the solution with the one obtained in step 2. Are the poses identical? If there is a difference, why might that happen?
