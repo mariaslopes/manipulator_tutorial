@@ -3,7 +3,7 @@ from launch import LaunchDescription
 from launch.actions import ExecuteProcess
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, TimerAction
 from launch.substitutions import LaunchConfiguration
 from moveit_configs_utils import MoveItConfigsBuilder
 
@@ -37,7 +37,7 @@ def generate_launch_description():
     return LaunchDescription(
         [
             mode,
-            task_launch,
+            TimerAction(period=3.0, actions=[task_launch]),
             object_pos_publisher,
         ]
     )
